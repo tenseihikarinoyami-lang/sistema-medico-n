@@ -152,7 +152,7 @@ export function useAppStore() {
     }
 
     try {
-      // Check local list first (optimization) or rely on backend error
+      // Check local list first (optimization)
       const existing = users.find(u => u.username === userData.username);
       if (existing) return { success: false, error: 'El usuario ya existe' };
 
@@ -172,7 +172,10 @@ export function useAppStore() {
       const newUser = await api.createUser(newUserPayload);
       setUsers(prev => [...prev, newUser]);
       return { success: true };
-    } catch (err) {
+    } catch (err: any) {
+      if (err.status === 409) {
+        return { success: false, error: 'Este nombre de usuario ya está registrado' };
+      }
       return { success: false, error: 'Error al crear usuario' };
     }
   }, [currentUser, users]);

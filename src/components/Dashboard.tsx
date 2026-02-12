@@ -151,7 +151,7 @@ export function Dashboard({ store }: { store: StoreType }) {
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-purple-500" /> CDI</span>
             </div>
           </div>
-          <div className="h-64">
+          <div className="h-64 w-full" style={{ minHeight: '256px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
@@ -174,7 +174,7 @@ export function Dashboard({ store }: { store: StoreType }) {
         <div className="bg-[#111827]/60 backdrop-blur-sm border border-white/5 rounded-2xl p-6">
           <h3 className="text-lg font-semibold mb-2">Distribución</h3>
           <p className="text-xs text-white/30 mb-4">Por tipo de reporte</p>
-          <div className="h-48">
+          <div className="h-48 w-full" style={{ minHeight: '192px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -227,21 +227,19 @@ export function Dashboard({ store }: { store: StoreType }) {
             {store.alerts.slice(0, 3).map(alert => (
               <div
                 key={alert.id}
-                className={`p-4 rounded-xl border transition-all cursor-pointer hover:scale-[1.01] ${
-                  alert.type === 'critical'
+                className={`p-4 rounded-xl border transition-all cursor-pointer hover:scale-[1.01] ${alert.type === 'critical'
                     ? 'bg-red-500/10 border-red-500/20'
                     : alert.type === 'warning'
-                    ? 'bg-yellow-500/10 border-yellow-500/20'
-                    : 'bg-blue-500/10 border-blue-500/20'
-                } ${!alert.read ? 'ring-1 ring-white/10' : ''}`}
+                      ? 'bg-yellow-500/10 border-yellow-500/20'
+                      : 'bg-blue-500/10 border-blue-500/20'
+                  } ${!alert.read ? 'ring-1 ring-white/10' : ''}`}
                 onClick={() => store.markAlertRead(alert.id)}
               >
                 <div className="flex items-start gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    alert.type === 'critical' ? 'bg-red-500/20' :
-                    alert.type === 'warning' ? 'bg-yellow-500/20' :
-                    'bg-blue-500/20'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${alert.type === 'critical' ? 'bg-red-500/20' :
+                      alert.type === 'warning' ? 'bg-yellow-500/20' :
+                        'bg-blue-500/20'
+                    }`}>
                     {alert.type === 'critical' ? (
                       <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

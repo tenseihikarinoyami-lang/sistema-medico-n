@@ -105,7 +105,9 @@ function mapAlertToDB(alert: Partial<Alert>): any {
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`API Error: ${response.status} - ${errorText}`);
+    const error = new Error(errorText) as any;
+    error.status = response.status;
+    throw error;
   }
   return response.json();
 }

@@ -30,7 +30,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export const api = {
   async login(username: string): Promise<User | null> {
     if (!API_URL) throw new Error("API URL not configured");
-    const url = `${API_URL}/tables/users?filter=username:eq:${username}`;
+    const url = `${API_URL}/api/database/records/users?username=eq.${username}`;
     const response = await fetch(url, { headers });
     const users = await handleResponse<User[]>(response);
     return users.length > 0 ? users[0] : null;
@@ -38,13 +38,13 @@ export const api = {
 
   async getUsers(): Promise<User[]> {
     if (!API_URL) throw new Error("API URL not configured");
-    const response = await fetch(`${API_URL}/tables/users`, { headers });
+    const response = await fetch(`${API_URL}/api/database/records/users`, { headers });
     return handleResponse<User[]>(response);
   },
 
   async createUser(user: Omit<User, 'id'>): Promise<User> {
     if (!API_URL) throw new Error("API URL not configured");
-    const response = await fetch(`${API_URL}/tables/users`, {
+    const response = await fetch(`${API_URL}/api/database/records/users`, {
       method: 'POST',
       headers,
       body: JSON.stringify(user)
@@ -54,19 +54,17 @@ export const api = {
 
   async updateUser(id: string, updates: Partial<User>): Promise<User> {
     if (!API_URL) throw new Error("API URL not configured");
-    const response = await fetch(`${API_URL}/tables/users?id=eq.${id}`, {
+    const response = await fetch(`${API_URL}/api/database/records/users?id=eq.${id}`, {
       method: 'PATCH',
       headers,
       body: JSON.stringify(updates)
     });
-    // Patch usually returns the updated row or empty, depending on Prefer header. 
-    // Assuming standardized InsForge response or fetching updated.
     return { id, ...updates } as User;
   },
 
   async deleteUser(id: string): Promise<void> {
     if (!API_URL) throw new Error("API URL not configured");
-    await fetch(`${API_URL}/tables/users?id=eq.${id}`, {
+    await fetch(`${API_URL}/api/database/records/users?id=eq.${id}`, {
       method: 'DELETE',
       headers
     });
@@ -74,7 +72,7 @@ export const api = {
 
   async getReports(): Promise<SavedReport[]> {
     if (!API_URL) throw new Error("API URL not configured");
-    const response = await fetch(`${API_URL}/tables/reports`, { headers });
+    const response = await fetch(`${API_URL}/api/database/records/reports`, { headers });
     return handleResponse<SavedReport[]>(response);
   },
 
@@ -85,7 +83,7 @@ export const api = {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
-    const response = await fetch(`${API_URL}/tables/reports`, {
+    const response = await fetch(`${API_URL}/api/database/records/reports`, {
       method: 'POST',
       headers,
       body: JSON.stringify(payload)
@@ -99,7 +97,7 @@ export const api = {
       ...updates,
       updated_at: new Date().toISOString()
     };
-    const response = await fetch(`${API_URL}/tables/reports?id=eq.${id}`, {
+    const response = await fetch(`${API_URL}/api/database/records/reports?id=eq.${id}`, {
       method: 'PATCH',
       headers,
       body: JSON.stringify(payload)
@@ -109,13 +107,13 @@ export const api = {
 
   async getAlerts(): Promise<Alert[]> {
     if (!API_URL) throw new Error("API URL not configured");
-    const response = await fetch(`${API_URL}/tables/alerts`, { headers });
+    const response = await fetch(`${API_URL}/api/database/records/alerts`, { headers });
     return handleResponse<Alert[]>(response);
   },
 
   async markAlertRead(id: string): Promise<void> {
     if (!API_URL) throw new Error("API URL not configured");
-    await fetch(`${API_URL}/tables/alerts?id=eq.${id}`, {
+    await fetch(`${API_URL}/api/database/records/alerts?id=eq.${id}`, {
       method: 'PATCH',
       headers,
       body: JSON.stringify({ read: true })
@@ -129,7 +127,7 @@ export const api = {
       created_at: new Date().toISOString(),
       read: false
     };
-    const response = await fetch(`${API_URL}/tables/alerts`, {
+    const response = await fetch(`${API_URL}/api/database/records/alerts`, {
       method: 'POST',
       headers,
       body: JSON.stringify(payload)

@@ -1,27 +1,10 @@
 # Guía de Despliegue (GitHub y Vercel)
 
-Sigue estos pasos para subir tu proyecto a GitHub y desplegarlo en Vercel.
+Sigue estos pasos para desplegar tu proyecto en Vercel.
 
-## 1. Subir a GitHub
+## 1. Código en GitHub
 
-1.  **Inicializar Git** (si no lo has hecho):
-    ```bash
-    git init
-    git add .
-    git commit -m "Migración a InsForge completada"
-    ```
-
-2.  **Crear Repositorio en GitHub**:
-    *   Ve a [GitHub.com](https://github.com) y crea un nuevo repositorio (ej. `sistema-medico`).
-    *   No marques "Initialize with README" ni añadas `.gitignore` (ya tienes uno).
-
-3.  **Conectar y Subir**:
-    *   Copia los comandos que te da GitHub, parecidos a estos:
-        ```bash
-        git remote add origin https://github.com/TU_USUARIO/sistema-medico.git
-        git branch -M main
-        git push -u origin main
-        ```
+Tu código ya ha sido subido exitosamente al repositorio: `https://github.com/tenseihikarinoyami-lang/sistema-medico-n`.
 
 ## 2. Desplegar en Vercel
 

@@ -1,15 +1,22 @@
-import { User, SavedReport, Alert, ReportData, ReportConfig } from '../types';
+import { User, SavedReport, Alert, ReportTemplate } from '../types';
 
-const API_URL = import.meta.env.VITE_INSFORGE_URL;
+// Ensure URL doesn't have a trailing slash
 const API_KEY = import.meta.env.VITE_INSFORGE_KEY;
+let API_URL = import.meta.env.VITE_INSFORGE_URL;
 
+// Fallback or correction
 if (!API_URL) {
-  console.warn('VITE_INSFORGE_URL is not set. API calls will fail.');
+  console.error("VITE_INSFORGE_URL is not defined! API calls will fail.");
+  // Optional: Default to a placeholder to prevent calling localhost
+  // API_URL = 'https://api.insforge.com/v1/projects/MISSING_ID'; 
+} else if (API_URL.endsWith('/')) {
+  API_URL = API_URL.slice(0, -1);
 }
 
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${API_KEY}`,
+  'apikey': API_KEY
 };
 
 async function handleResponse<T>(response: Response): Promise<T> {
@@ -21,11 +28,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export const api = {
-  // --- Auth & Users ---
   async login(username: string): Promise<User | null> {
-    // InsForge might handle auth differently, but for this migration we'll simulate
-    // finding a user by username in the 'users' table.
-    // Real implementation would use an Auth provider or a specific /auth/login endpoint.
+    if (!API_URL) throw new Error("API URL not configured");
     const url = `${API_URL}/tables/users?filter=username:eq:${username}`;
     const response = await fetch(url, { headers });
     const users = await handleResponse<User[]>(response);
@@ -33,96 +37,103 @@ export const api = {
   },
 
   async getUsers(): Promise<User[]> {
+    if (!API_URL) throw new Error("API URL not configured");
     const response = await fetch(`${API_URL}/tables/users`, { headers });
     return handleResponse<User[]>(response);
   },
 
-  async createUser(user: Partial<User>): Promise<User> {
+  async createUser(user: Omit<User, 'id'>): Promise<User> {
+    if (!API_URL) throw new Error("API URL not configured");
     const response = await fetch(`${API_URL}/tables/users`, {
       method: 'POST',
       headers,
-      body: JSON.stringify(user),
+      body: JSON.stringify(user)
     });
     return handleResponse<User>(response);
   },
 
-  async updateUser(userId: string, updates: Partial<User>): Promise<User> {
-    const response = await fetch(`${API_URL}/tables/users/${userId}`, {
+  async updateUser(id: string, updates: Partial<User>): Promise<User> {
+    if (!API_URL) throw new Error("API URL not configured");
+    const response = await fetch(`${API_URL}/tables/users?id=eq.${id}`, {
       method: 'PATCH',
       headers,
-      body: JSON.stringify(updates),
+      body: JSON.stringify(updates)
     });
-    return handleResponse<User>(response);
-  },
-    
-  async deleteUser(userId: string): Promise<void> {
-    const response = await fetch(`${API_URL}/tables/users/${userId}`, {
-        method: 'DELETE',
-        headers
-    });
-    if (!response.ok) throw new Error('Failed to delete user');
+    // Patch usually returns the updated row or empty, depending on Prefer header. 
+    // Assuming standardized InsForge response or fetching updated.
+    return { id, ...updates } as User;
   },
 
-  // --- Reports ---
+  async deleteUser(id: string): Promise<void> {
+    if (!API_URL) throw new Error("API URL not configured");
+    await fetch(`${API_URL}/tables/users?id=eq.${id}`, {
+      method: 'DELETE',
+      headers
+    });
+  },
+
   async getReports(): Promise<SavedReport[]> {
+    if (!API_URL) throw new Error("API URL not configured");
     const response = await fetch(`${API_URL}/tables/reports`, { headers });
     return handleResponse<SavedReport[]>(response);
   },
 
-  async saveReport(report: Partial<SavedReport>): Promise<SavedReport> {
-    const method = report.id ? 'PUT' : 'POST'; // Assuming PUT for update if ID exists, or separate update method
-    // If it's a new report, let the backend generate ID or use the one provided if InsForge allows.
-    // For this generic implementation, we'll try POST for creation.
-    
-    // Check if updating or creating
-    if (report.id && !report.createdAt) { // Heuristic: if it has ID but we are "saving" it as new... wait.
-       // Actually store.ts generates IDs locally. We should probably let backend handle IDs or keep UUIDs.
-       // Let's assume we use the PUT/PATCH for updates and POST for create.
-       // But store.ts logic was: saveReport -> setReports([newReport, ...prev]).
-       // We need to differentiate create vs update in the store or here.
-    }
-    
-    // For simplicity, let's treat "save" as "create" if it doesn't exist, or "update" if it does.
-    // But since this is a new migration, let's just expose create and update separately or handle it.
-    
+  async saveReport(report: Omit<SavedReport, 'id' | 'createdAt' | 'updatedAt'>): Promise<SavedReport> {
+    if (!API_URL) throw new Error("API URL not configured");
+    const payload = {
+      ...report,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
     const response = await fetch(`${API_URL}/tables/reports`, {
       method: 'POST',
       headers,
-      body: JSON.stringify(report),
+      body: JSON.stringify(payload)
     });
     return handleResponse<SavedReport>(response);
   },
 
-  async updateReport(reportId: string, updates: Partial<SavedReport>): Promise<SavedReport> {
-    const response = await fetch(`${API_URL}/tables/reports/${reportId}`, {
+  async updateReport(id: string, updates: Partial<SavedReport>): Promise<SavedReport> {
+    if (!API_URL) throw new Error("API URL not configured");
+    const payload = {
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    const response = await fetch(`${API_URL}/tables/reports?id=eq.${id}`, {
       method: 'PATCH',
       headers,
-      body: JSON.stringify(updates),
+      body: JSON.stringify(payload)
     });
-    return handleResponse<SavedReport>(response);
+    return { id, ...updates } as SavedReport;
   },
 
-  // --- Alerts ---
   async getAlerts(): Promise<Alert[]> {
+    if (!API_URL) throw new Error("API URL not configured");
     const response = await fetch(`${API_URL}/tables/alerts`, { headers });
     return handleResponse<Alert[]>(response);
   },
 
-  async markAlertRead(alertId: string): Promise<Alert> {
-    const response = await fetch(`${API_URL}/tables/alerts/${alertId}`, {
+  async markAlertRead(id: string): Promise<void> {
+    if (!API_URL) throw new Error("API URL not configured");
+    await fetch(`${API_URL}/tables/alerts?id=eq.${id}`, {
       method: 'PATCH',
       headers,
-      body: JSON.stringify({ read: true }),
+      body: JSON.stringify({ read: true })
+    });
+  },
+
+  async createAlert(alert: Omit<Alert, 'id' | 'createdAt'>): Promise<Alert> {
+    if (!API_URL) throw new Error("API URL not configured");
+    const payload = {
+      ...alert,
+      created_at: new Date().toISOString(),
+      read: false
+    };
+    const response = await fetch(`${API_URL}/tables/alerts`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload)
     });
     return handleResponse<Alert>(response);
-  },
-  
-  async createAlert(alert: Partial<Alert>): Promise<Alert> {
-      const response = await fetch(`${API_URL}/tables/alerts`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(alert)
-      });
-      return handleResponse<Alert>(response);
   }
 };

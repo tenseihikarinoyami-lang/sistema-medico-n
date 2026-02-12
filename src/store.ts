@@ -124,9 +124,9 @@ export function useAppStore() {
 
     try {
       const updated = await api.updateUser(currentUser.id, { password: newPassword, mustChangePassword: false });
-      setCurrentUser(updated);
+      setCurrentUser(prev => prev ? { ...prev, ...updated } : null);
       // Update generic users list if admin
-      setUsers(prev => prev.map(u => u.id === currentUser.id ? updated : u));
+      setUsers(prev => prev.map(u => u.id === currentUser.id ? { ...u, ...updated } : u));
       return { success: true };
     } catch (err) {
       return { success: false, error: 'Error al actualizar contraseña' };
@@ -138,8 +138,8 @@ export function useAppStore() {
 
     try {
       const updated = await api.updateUser(currentUser.id, { ...profileData, profileCompleted: true });
-      setCurrentUser(updated);
-      setUsers(prev => prev.map(u => u.id === currentUser.id ? updated : u));
+      setCurrentUser(prev => prev ? { ...prev, ...updated } : null);
+      setUsers(prev => prev.map(u => u.id === currentUser.id ? { ...u, ...updated } : u));
       return { success: true };
     } catch (err) {
       return { success: false, error: 'Error al actualizar perfil' };
@@ -156,14 +156,13 @@ export function useAppStore() {
       const existing = users.find(u => u.username === userData.username);
       if (existing) return { success: false, error: 'El usuario ya existe' };
 
-      const newUserPayload = {
+      const newUserPayload: Omit<User, 'id'> = {
         username: userData.username,
         password: userData.password,
         role: userData.role,
         mustChangePassword: true,
         profileCompleted: false,
         createdAt: new Date().toISOString(),
-        // Default empty fields
         name: '',
         cedula: '',
         centro: '',
@@ -195,7 +194,7 @@ export function useAppStore() {
     if (!currentUser || currentUser.role !== 'administrador') return { success: false, error: 'No autorizado' };
     try {
       const updated = await api.updateUser(userId, { password: newPassword, mustChangePassword: true });
-      setUsers(prev => prev.map(u => u.id === userId ? updated : u));
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, ...updated } : u));
       return { success: true };
     } catch (err) {
       return { success: false, error: 'Error al resetear contraseña' };

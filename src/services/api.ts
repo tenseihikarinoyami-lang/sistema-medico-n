@@ -109,7 +109,8 @@ async function handleResponse<T>(response: Response): Promise<T> {
     error.status = response.status;
     throw error;
   }
-  return response.json();
+  const text = await response.text();
+  return text ? JSON.parse(text) : {} as T;
 }
 
 export const api = {
@@ -129,20 +130,21 @@ export const api = {
   async createUser(user: Omit<User, 'id'>): Promise<User> {
     const response = await fetch(`${API_URL}/api/database/records/users`, {
       method: 'POST',
-      headers,
+      headers: { ...headers, 'Prefer': 'return=representation' },
       body: JSON.stringify(mapUserToDB(user))
     });
-    const result = await handleResponse<any>(response);
-    return mapUserFromDB(result);
+    const result = await handleResponse<any[]>(response);
+    return mapUserFromDB(result[0] || result);
   },
 
   async updateUser(id: string, updates: Partial<User>): Promise<User> {
-    await fetch(`${API_URL}/api/database/records/users?id=eq.${id}`, {
+    const response = await fetch(`${API_URL}/api/database/records/users?id=eq.${id}`, {
       method: 'PATCH',
-      headers,
+      headers: { ...headers, 'Prefer': 'return=representation' },
       body: JSON.stringify(mapUserToDB(updates))
     });
-    return updates as any; // Full object handled by store
+    const result = await handleResponse<any[]>(response);
+    return mapUserFromDB(result[0] || result);
   },
 
   async deleteUser(id: string): Promise<void> {
@@ -161,20 +163,21 @@ export const api = {
   async saveReport(report: Partial<SavedReport>): Promise<SavedReport> {
     const response = await fetch(`${API_URL}/api/database/records/reports`, {
       method: 'POST',
-      headers,
+      headers: { ...headers, 'Prefer': 'return=representation' },
       body: JSON.stringify(mapReportToDB(report))
     });
-    const result = await handleResponse<any>(response);
-    return mapReportFromDB(result);
+    const result = await handleResponse<any[]>(response);
+    return mapReportFromDB(result[0] || result);
   },
 
   async updateReport(id: string, updates: Partial<SavedReport>): Promise<SavedReport> {
-    await fetch(`${API_URL}/api/database/records/reports?id=eq.${id}`, {
+    const response = await fetch(`${API_URL}/api/database/records/reports?id=eq.${id}`, {
       method: 'PATCH',
-      headers,
+      headers: { ...headers, 'Prefer': 'return=representation' },
       body: JSON.stringify(mapReportToDB(updates))
     });
-    return updates as any;
+    const result = await handleResponse<any[]>(response);
+    return mapReportFromDB(result[0] || result);
   },
 
   async getAlerts(): Promise<Alert[]> {
@@ -194,10 +197,10 @@ export const api = {
   async createAlert(alert: Partial<Alert>): Promise<Alert> {
     const response = await fetch(`${API_URL}/api/database/records/alerts`, {
       method: 'POST',
-      headers,
+      headers: { ...headers, 'Prefer': 'return=representation' },
       body: JSON.stringify(mapAlertToDB(alert))
     });
-    const result = await handleResponse<any>(response);
-    return mapAlertFromDB(result);
+    const result = await handleResponse<any[]>(response);
+    return mapAlertFromDB(result[0] || result);
   }
 };

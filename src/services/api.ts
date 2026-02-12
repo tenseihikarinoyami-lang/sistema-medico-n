@@ -199,5 +199,3 @@ export const api = {
     return mapAlertFromDB(result);
   }
 };
-
-};

@@ -91,7 +91,7 @@ export function Sidebar({ store }: { store: StoreType }) {
             <img
               src="/alcaldia_logo.png"
               alt="Alcaldía Santiago Mariño"
-              className="w-10 h-10 rounded-xl object-contain flex-shrink-0 shadow-lg shadow-blue-500/20 bg-white/5 p-0.5"
+              className="w-12 h-12 rounded-xl object-contain flex-shrink-0 shadow-xl shadow-blue-500/30 bg-white/[0.07] p-1 ring-1 ring-white/10"
             />
             {store.sidebarOpen && (
               <div>

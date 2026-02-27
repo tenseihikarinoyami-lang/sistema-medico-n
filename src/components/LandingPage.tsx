@@ -30,13 +30,13 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
             <img
               src="/alcaldia_logo.png"
               alt="Alcaldía Santiago Mariño"
-              className="w-12 h-12 rounded-xl object-contain shadow-lg shadow-blue-500/20 bg-white/5 p-0.5"
+              className="w-14 h-14 rounded-2xl object-contain shadow-xl shadow-blue-500/30 bg-white/[0.07] p-1 ring-1 ring-white/10"
             />
             <div>
               <span className="text-xl font-bold tracking-tight">
                 Medi<span className="text-blue-400">Report</span>
               </span>
-              <div className="text-[8px] text-white/30 tracking-[0.15em] uppercase leading-tight">Alcaldía Santiago Mariño</div>
+              <div className="text-[8px] text-white/40 tracking-[0.15em] uppercase leading-tight font-semibold">Alcaldía Santiago Mariño</div>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
@@ -74,16 +74,16 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
               </h1>
 
               {/* Government Branding */}
-              <div className="flex items-center gap-4 bg-white/[0.03] border border-white/5 rounded-2xl p-4">
+              <div className="flex items-center gap-5 bg-gradient-to-r from-white/[0.04] to-white/[0.01] border border-white/10 rounded-2xl p-5 shadow-xl shadow-blue-500/5">
                 <img
                   src="/alcaldia_logo.png"
                   alt="Alcaldía Santiago Mariño"
-                  className="w-16 h-16 rounded-xl object-contain bg-white/5 p-1 shadow-lg shadow-blue-500/10"
+                  className="w-24 h-24 rounded-2xl object-contain bg-white/[0.06] p-2 shadow-xl shadow-blue-500/20 ring-1 ring-white/10"
                 />
                 <div>
-                  <div className="text-sm font-extrabold tracking-wider uppercase text-white/90">Alcaldía Santiago Mariño</div>
-                  <div className="text-xs font-bold text-blue-400 tracking-wide">Carlos Guzmán</div>
-                  <div className="text-[10px] text-white/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Gente Que Resuelve</div>
+                  <div className="text-lg md:text-xl font-black tracking-wide uppercase text-white">Alcaldía Santiago Mariño</div>
+                  <div className="text-sm md:text-base font-bold text-blue-400 tracking-wide mt-0.5">Carlos Guzmán</div>
+                  <div className="text-xs text-white/50 tracking-[0.25em] uppercase font-bold mt-1">Gente Que Resuelve</div>
                 </div>
               </div>
 
@@ -164,8 +164,8 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                       <div key={name} className="flex items-center justify-between text-xs">
                         <span className="text-white/60">{name}</span>
                         <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${i === 0 ? 'bg-green-500/20 text-green-400' :
-                            i === 1 ? 'bg-blue-500/20 text-blue-400' :
-                              'bg-yellow-500/20 text-yellow-400'
+                          i === 1 ? 'bg-blue-500/20 text-blue-400' :
+                            'bg-yellow-500/20 text-yellow-400'
                           }`}>
                           {i === 0 ? 'Aprobado' : i === 1 ? 'Enviado' : 'Pendiente'}
                         </span>

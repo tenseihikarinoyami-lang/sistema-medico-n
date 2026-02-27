@@ -77,7 +77,7 @@ export function App() {
       <Sidebar store={store} />
       <div className={`transition-all duration-300 ${store.sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'}`}>
         <Header store={store} viewTitle={viewTitles[store.currentView] || ''} />
-        <main className="p-4 md:p-6 lg:p-8 pt-20 md:pt-24">
+        <main className="p-4 md:p-6 lg:p-8 pt-24 md:pt-28">
           {store.currentView === 'dashboard' && <Dashboard store={store} />}
           {store.currentView === 'wizard' && <ReportWizard store={store} />}
           {store.currentView === 'reports' && <ReportsView store={store} />}
@@ -94,7 +94,7 @@ function Header({ store, viewTitle }: { store: ReturnType<typeof useAppStore>; v
   const unreadAlerts = store.alerts.filter(a => !a.read).length;
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-auto z-30 bg-[#0d1225]/90 backdrop-blur-xl border-b border-white/5 px-4 md:px-6 lg:px-8 py-3">
+    <header className="fixed top-0 right-0 left-0 lg:left-auto z-30 bg-[#0d1225]/90 backdrop-blur-xl border-b border-white/5 px-4 md:px-6 lg:px-8 py-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button

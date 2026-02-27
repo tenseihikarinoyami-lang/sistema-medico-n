@@ -19,9 +19,6 @@ const pieData = [
 ];
 
 export function Dashboard({ store }: { store: StoreType }) {
-  const isAdmin = store.currentUser?.role === 'administrador';
-  const isCoord = store.currentUser?.role === 'coordinador';
-  const hasGlobalView = isAdmin || isCoord;
   const visibleReports = store.getVisibleReports();
 
   const statusColors: Record<string, string> = {
@@ -49,12 +46,11 @@ export function Dashboard({ store }: { store: StoreType }) {
       <div className="bg-gradient-to-r from-blue-600/20 via-blue-700/10 to-transparent border border-blue-500/20 rounded-2xl p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold mb-1">
-              ¡Bienvenido/a, {store.currentUser?.name}!
-            </h2>
-            <p className="text-white/40 text-sm">
-              {store.currentUser?.centro || 'Sin centro'} · ASIC {store.currentUser?.asic?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Sin ASIC'} · Rol: <span className="capitalize text-blue-400">{store.currentUser?.role}</span>
-              {hasGlobalView && <span className="ml-2 text-blue-400/60">· Vista global de todos los reportes</span>}
+            <p className="text-white/60 text-sm mb-1 font-medium">
+              ¡Bienvenido/a de nuevo!
+            </p>
+            <p className="text-white/30 text-[11px]">
+              {store.currentUser?.centro || 'Sin centro'} · ASIC {store.currentUser?.asic?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Sin ASIC'} · <span className="text-blue-400/60">{store.currentUser?.role}</span>
             </p>
           </div>
           <button

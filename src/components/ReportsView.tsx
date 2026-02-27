@@ -230,34 +230,31 @@ export function ReportsView({ store }: { store: StoreType }) {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Actions Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold">
-            {hasGlobalView ? 'Todos los Reportes' : 'Mis Reportes'}
-          </h2>
           <p className="text-sm text-white/40">
             {filteredReports.length} reportes encontrados
-            {hasGlobalView && <span className="text-blue-400/60 ml-2">(Vista {isAdmin ? 'de administrador' : 'de coordinador'} — Todos los usuarios)</span>}
+            {hasGlobalView && <span className="text-blue-400/60 ml-2">(Vista {isAdmin ? 'Admin' : 'Coord'} — Todos los usuarios)</span>}
           </p>
         </div>
         <div className="flex items-center gap-3">
           {canDownload && filteredReports.length > 0 && (
             <button
               onClick={exportTotalizedReport}
-              className="px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-xl font-semibold transition-all shadow-lg shadow-green-600/20 hover:scale-105 flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-green-600/20 hover:scale-105 flex items-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Descargar Totalizado ({filteredReports.length})
+              Exportar Totalizado ({filteredReports.length})
             </button>
           )}
           <button
             onClick={store.startWizard}
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20 hover:scale-105 flex items-center gap-2"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-blue-600/20 hover:scale-105 flex items-center gap-2"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Nuevo Reporte
@@ -348,10 +345,10 @@ export function ReportsView({ store }: { store: StoreType }) {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-start gap-4 flex-1 min-w-0">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xl ${report.templateId === 'rac_nacional' ? 'bg-blue-500/15' :
-                    report.templateId === 'emergencias_cdi' ? 'bg-red-500/15' :
-                      report.templateId === 'asic_consolidado' ? 'bg-green-500/15' :
-                        report.templateId === 'resumen_semanal' ? 'bg-purple-500/15' :
-                          'bg-yellow-500/15'
+                  report.templateId === 'emergencias_cdi' ? 'bg-red-500/15' :
+                    report.templateId === 'asic_consolidado' ? 'bg-green-500/15' :
+                      report.templateId === 'resumen_semanal' ? 'bg-purple-500/15' :
+                        'bg-yellow-500/15'
                   }`}>
                   {report.templateId === 'rac_nacional' ? '📊' :
                     report.templateId === 'emergencias_cdi' ? '🏥' :

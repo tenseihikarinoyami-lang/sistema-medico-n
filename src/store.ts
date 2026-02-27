@@ -271,6 +271,40 @@ export function useAppStore() {
     try {
       const saved = await api.saveReport(newReportPayload);
       setReports(prev => [saved, ...prev]);
+
+      // --- Automated Notification Logic ---
+      // 1. Check for critical values (> 50)
+      const criticalIndicators = Object.entries(reportData)
+        .filter(([, val]) => Number(val) > 50)
+        .map(([key]) => key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+
+      if (criticalIndicators.length > 0) {
+        const newAlert: Omit<Alert, 'id'> = {
+          title: 'Valores Críticos Detectados',
+          detail: `El reporte "${templateNames[template]}" contiene valores inusualmente altos en: ${criticalIndicators.join(', ')}.`,
+          type: 'critical',
+          read: false,
+          createdAt: new Date().toISOString(),
+          meta: `Reporte ID: ${saved.id} · Centro: ${reportConfig.centro}`,
+          reportId: saved.id
+        };
+        const savedAlert = await api.createAlert(newAlert);
+        setAlerts(prev => [savedAlert, ...prev]);
+      }
+
+      // 2. Info alert for the user
+      const infoAlert: Omit<Alert, 'id'> = {
+        title: 'Reporte Guardado',
+        detail: `Has guardado exitosamente el reporte "${templateNames[template]}".`,
+        type: 'info',
+        read: false,
+        createdAt: new Date().toISOString(),
+        meta: `Estado: ${status === 'borrador' ? 'Borrador' : 'Pendiente de revisión'}`
+      };
+      const savedInfo = await api.createAlert(infoAlert);
+      setAlerts(prev => [savedInfo, ...prev]);
+      // ------------------------------------
+
       setCurrentView('dashboard');
     } catch (err) {
       console.error('Failed to save report', err);
@@ -295,6 +329,22 @@ export function useAppStore() {
         approvedBy: currentUser?.name
       });
       setReports(prev => prev.map(r => r.id === reportId ? updated : r));
+
+      // --- Automated Notification Logic ---
+      if (status === 'aprobado' || status === 'enviado') {
+        const approvalAlert: Omit<Alert, 'id'> = {
+          title: `Reporte ${status === 'aprobado' ? 'Aprobado' : 'Enviado'}`,
+          detail: `El reporte "${updated.templateName}" de ${updated.config.centro} ha sido ${status === 'aprobado' ? 'aprobado' : 'marcado como enviado'} por ${currentUser?.name}.`,
+          type: 'info',
+          read: false,
+          createdAt: new Date().toISOString(),
+          meta: `Ref: ${updated.id}`,
+          reportId: updated.id
+        };
+        const savedAlert = await api.createAlert(approvalAlert);
+        setAlerts(prev => [savedAlert, ...prev]);
+      }
+      // ------------------------------------
     } catch (err) {
       console.error('Failed to update report status', err);
     }

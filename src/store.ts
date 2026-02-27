@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import type { User, SavedReport, Alert, AppView, ReportConfig, ReportData, WizardStep } from './types';
 import { api } from './services/api';
 
-const today = new Date().toISOString().split('T')[0];
+
 
 export function useAppStore() {
   const [currentView, setCurrentView] = useState<AppView>(() => {
@@ -51,7 +51,7 @@ export function useAppStore() {
           setReports(fetchedReports);
           setAlerts(fetchedAlerts);
 
-          if (currentUser.role === 'administrador') {
+          if (currentUser.role === 'administrador' || currentUser.role === 'coordinador') {
             const fetchedUsers = await api.getUsers();
             setUsers(fetchedUsers);
           }
@@ -147,8 +147,8 @@ export function useAppStore() {
   }, [currentUser]);
 
   const createUser = useCallback(async (userData: { username: string; password: string; role: User['role'] }): Promise<{ success: boolean; error?: string }> => {
-    if (!currentUser || currentUser.role !== 'administrador') {
-      return { success: false, error: 'Solo los administradores pueden crear usuarios' };
+    if (!currentUser || (currentUser.role !== 'administrador' && currentUser.role !== 'coordinador')) {
+      return { success: false, error: 'Solo administradores y coordinadores pueden crear usuarios' };
     }
 
     try {
@@ -194,13 +194,35 @@ export function useAppStore() {
   }, [currentUser]);
 
   const resetUserPassword = useCallback(async (userId: string, newPassword: string): Promise<{ success: boolean; error?: string }> => {
-    if (!currentUser || currentUser.role !== 'administrador') return { success: false, error: 'No autorizado' };
+    if (!currentUser || (currentUser.role !== 'administrador' && currentUser.role !== 'coordinador')) return { success: false, error: 'No autorizado' };
+    // Coordinador cannot reset admin passwords
+    const targetUser = users.find(u => u.id === userId);
+    if (currentUser.role === 'coordinador' && targetUser?.role === 'administrador') {
+      return { success: false, error: 'No puede modificar contraseñas de administradores' };
+    }
     try {
       const updated = await api.updateUser(userId, { password: newPassword, mustChangePassword: true });
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, ...updated } : u));
       return { success: true };
     } catch (err) {
       return { success: false, error: 'Error al resetear contraseña' };
+    }
+  }, [currentUser, users]);
+
+  const updateUserRole = useCallback(async (userId: string, newRole: User['role']): Promise<{ success: boolean; error?: string }> => {
+    if (!currentUser || (currentUser.role !== 'administrador' && currentUser.role !== 'coordinador')) {
+      return { success: false, error: 'No autorizado' };
+    }
+    // Coordinador cannot assign admin role
+    if (currentUser.role === 'coordinador' && newRole === 'administrador') {
+      return { success: false, error: 'No puede asignar rol de administrador' };
+    }
+    try {
+      const updated = await api.updateUser(userId, { role: newRole });
+      setUsers(prev => prev.map(u => u.id === userId ? { ...u, ...updated } : u));
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: 'Error al cambiar rol' };
     }
   }, [currentUser]);
 
@@ -281,7 +303,7 @@ export function useAppStore() {
   // Get reports visible to current user
   const getVisibleReports = useCallback(() => {
     if (!currentUser) return [];
-    if (currentUser.role === 'administrador') return reports;
+    if (currentUser.role === 'administrador' || currentUser.role === 'coordinador') return reports;
     return reports.filter(r => r.createdByUserId === currentUser.id);
   }, [currentUser, reports]);
 
@@ -314,7 +336,7 @@ export function useAppStore() {
     login, logout,
     changePassword,
     updateProfile,
-    createUser, deleteUser, resetUserPassword,
+    createUser, deleteUser, resetUserPassword, updateUserRole,
     reports, setReports, saveReport, updateReportStatus,
     getVisibleReports,
     getUsersReportedToday, getUsersNotReportedToday,

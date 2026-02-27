@@ -38,7 +38,7 @@ export function ProfileView({ store }: { store: StoreType }) {
     }
   }, [user, needsProfile, mustChange]);
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPassError('');
     setPassSuccess('');
@@ -49,7 +49,7 @@ export function ProfileView({ store }: { store: StoreType }) {
     if (newPassword !== confirmPassword) { setPassError('Las contraseñas no coinciden'); return; }
     if (currentPassword === newPassword) { setPassError('La nueva contraseña debe ser diferente a la actual'); return; }
 
-    const result = store.changePassword(currentPassword, newPassword);
+    const result = await store.changePassword(currentPassword, newPassword);
     if (result.success) {
       setPassSuccess('¡Contraseña actualizada exitosamente!');
       setCurrentPassword('');
@@ -69,12 +69,12 @@ export function ProfileView({ store }: { store: StoreType }) {
     }
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileError('');
     setProfileSuccess('');
 
-    const result = store.updateProfile({
+    const result = await store.updateProfile({
       name: editName,
       cedula: editCedula,
       centro: editCentro,
@@ -197,12 +197,12 @@ export function ProfileView({ store }: { store: StoreType }) {
             <InfoCard label="Nombre Completo" value={user?.name || 'Sin definir'} />
             <InfoCard label="Usuario" value={`@${user?.username}`} highlight />
             <InfoCard label="Rol" value={user?.role || ''} badge={
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                user?.role === 'administrador' ? 'bg-blue-500/20 text-blue-400' :
-                user?.role === 'doctor' ? 'bg-green-500/20 text-green-400' :
-                'bg-purple-500/20 text-purple-400'
-              }`}>
-                {user?.role === 'administrador' ? '🛡️' : user?.role === 'doctor' ? '🩺' : '💉'}
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${user?.role === 'administrador' ? 'bg-blue-500/20 text-blue-400' :
+                  user?.role === 'coordinador' ? 'bg-cyan-500/20 text-cyan-400' :
+                    user?.role === 'doctor' ? 'bg-green-500/20 text-green-400' :
+                      'bg-purple-500/20 text-purple-400'
+                }`}>
+                {user?.role === 'administrador' ? '🛡️' : user?.role === 'coordinador' ? '📋' : user?.role === 'doctor' ? '🩺' : '💉'}
                 {user?.role}
               </span>
             } />
@@ -347,7 +347,7 @@ export function ProfileView({ store }: { store: StoreType }) {
           Cambiar Contraseña
         </h3>
         <p className="text-xs text-white/30 mb-6">
-          {mustChange 
+          {mustChange
             ? 'Debe establecer una contraseña personal para continuar usando el sistema.'
             : 'Actualice su contraseña periódicamente para mantener la seguridad de su cuenta.'
           }
@@ -465,13 +465,12 @@ export function ProfileView({ store }: { store: StoreType }) {
                 value={confirmPassword}
                 onChange={(e) => { setConfirmPassword(e.target.value); setPassError(''); }}
                 placeholder="Repita la nueva contraseña"
-                className={`w-full bg-white/5 border rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:ring-1 outline-none transition placeholder:text-white/20 ${
-                  confirmPassword && confirmPassword !== newPassword
+                className={`w-full bg-white/5 border rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:ring-1 outline-none transition placeholder:text-white/20 ${confirmPassword && confirmPassword !== newPassword
                     ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500'
                     : confirmPassword && confirmPassword === newPassword
-                    ? 'border-green-500/50 focus:border-green-500 focus:ring-green-500'
-                    : 'border-white/10 focus:border-blue-500 focus:ring-blue-500'
-                }`}
+                      ? 'border-green-500/50 focus:border-green-500 focus:ring-green-500'
+                      : 'border-white/10 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
               />
               {confirmPassword && (
                 <div className="absolute right-3.5 top-1/2 -translate-y-1/2">

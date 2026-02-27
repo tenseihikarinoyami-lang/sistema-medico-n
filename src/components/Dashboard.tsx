@@ -20,6 +20,8 @@ const pieData = [
 
 export function Dashboard({ store }: { store: StoreType }) {
   const isAdmin = store.currentUser?.role === 'administrador';
+  const isCoord = store.currentUser?.role === 'coordinador';
+  const hasGlobalView = isAdmin || isCoord;
   const visibleReports = store.getVisibleReports();
 
   const statusColors: Record<string, string> = {
@@ -52,7 +54,7 @@ export function Dashboard({ store }: { store: StoreType }) {
             </h2>
             <p className="text-white/40 text-sm">
               {store.currentUser?.centro || 'Sin centro'} · ASIC {store.currentUser?.asic?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Sin ASIC'} · Rol: <span className="capitalize text-blue-400">{store.currentUser?.role}</span>
-              {isAdmin && <span className="ml-2 text-blue-400/60">· Vista global de todos los reportes</span>}
+              {hasGlobalView && <span className="ml-2 text-blue-400/60">· Vista global de todos los reportes</span>}
             </p>
           </div>
           <button
@@ -228,17 +230,17 @@ export function Dashboard({ store }: { store: StoreType }) {
               <div
                 key={alert.id}
                 className={`p-4 rounded-xl border transition-all cursor-pointer hover:scale-[1.01] ${alert.type === 'critical'
-                    ? 'bg-red-500/10 border-red-500/20'
-                    : alert.type === 'warning'
-                      ? 'bg-yellow-500/10 border-yellow-500/20'
-                      : 'bg-blue-500/10 border-blue-500/20'
+                  ? 'bg-red-500/10 border-red-500/20'
+                  : alert.type === 'warning'
+                    ? 'bg-yellow-500/10 border-yellow-500/20'
+                    : 'bg-blue-500/10 border-blue-500/20'
                   } ${!alert.read ? 'ring-1 ring-white/10' : ''}`}
                 onClick={() => store.markAlertRead(alert.id)}
               >
                 <div className="flex items-start gap-3">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${alert.type === 'critical' ? 'bg-red-500/20' :
-                      alert.type === 'warning' ? 'bg-yellow-500/20' :
-                        'bg-blue-500/20'
+                    alert.type === 'warning' ? 'bg-yellow-500/20' :
+                      'bg-blue-500/20'
                     }`}>
                     {alert.type === 'critical' ? (
                       <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

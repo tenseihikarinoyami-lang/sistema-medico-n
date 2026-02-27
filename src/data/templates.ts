@@ -340,11 +340,16 @@ export const TEMPLATE_FIELDS: Record<string, { section: string; label: string; f
   ]
 };
 
-export const ROLE_PERMISSIONS = {
+export const ROLE_PERMISSIONS: Record<string, { reportTemplates: string[]; actions: string[]; sections: string | string[]; restrictions?: { requiresApproval?: boolean; maxDailyReports?: number } }> = {
   'administrador': {
     reportTemplates: ['rac_nacional', 'asic_consolidado', 'resumen_semanal', 'emergencias_cdi', 'actividades_diarias'],
     actions: ['create', 'edit', 'delete', 'export', 'approve', 'view_all', 'assign_templates', 'manage_users'],
-    sections: 'all' as const
+    sections: 'all'
+  },
+  'coordinador': {
+    reportTemplates: ['rac_nacional', 'asic_consolidado', 'resumen_semanal', 'emergencias_cdi', 'actividades_diarias'],
+    actions: ['create', 'edit', 'export', 'view_all', 'manage_users'],
+    sections: 'all'
   },
   'doctor': {
     reportTemplates: ['emergencias_cdi', 'resumen_semanal', 'actividades_diarias'],

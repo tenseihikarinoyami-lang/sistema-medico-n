@@ -179,11 +179,10 @@ export function ReportWizard({ store }: { store: StoreType }) {
         <div className="flex items-center justify-between mb-4">
           {([1, 2, 3, 4] as WizardStep[]).map((s) => (
             <div key={s} className="flex items-center flex-1">
-              <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
-                s < step ? 'bg-blue-600 border-blue-600 text-white' :
-                s === step ? 'bg-blue-600/20 border-blue-500 text-blue-400' :
-                'bg-white/5 border-white/10 text-white/30'
-              }`}>
+              <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${s < step ? 'bg-blue-600 border-blue-600 text-white' :
+                  s === step ? 'bg-blue-600/20 border-blue-500 text-blue-400' :
+                    'bg-white/5 border-white/10 text-white/30'
+                }`}>
                 {s < step ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -193,9 +192,8 @@ export function ReportWizard({ store }: { store: StoreType }) {
                 )}
               </div>
               {s < 4 && (
-                <div className={`flex-1 h-0.5 mx-2 rounded transition-all ${
-                  s < step ? 'bg-blue-600' : 'bg-white/10'
-                }`} />
+                <div className={`flex-1 h-0.5 mx-2 rounded transition-all ${s < step ? 'bg-blue-600' : 'bg-white/10'
+                  }`} />
               )}
             </div>
           ))}
@@ -261,21 +259,20 @@ export function ReportWizard({ store }: { store: StoreType }) {
                 <button
                   key={template.id}
                   onClick={() => store.setSelectedTemplateId(template.id)}
-                  className={`text-left p-5 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] ${
-                    store.selectedTemplateId === template.id
+                  className={`text-left p-5 rounded-2xl border-2 transition-all duration-300 hover:scale-[1.02] ${store.selectedTemplateId === template.id
                       ? 'border-blue-500 bg-blue-500/10 shadow-lg shadow-blue-500/10'
                       : 'border-white/5 bg-white/[0.02] hover:border-white/10'
-                  }`}
+                    }`}
                 >
                   {/* Template preview */}
                   <div className="h-28 rounded-xl mb-4 flex items-center justify-center relative overflow-hidden"
                     style={{ background: `linear-gradient(135deg, ${template.color}15, ${template.color}05)` }}>
                     <span className="text-4xl">
                       {template.id === 'rac_nacional' ? '📊' :
-                       template.id === 'emergencias_cdi' ? '🏥' :
-                       template.id === 'asic_consolidado' ? '📈' :
-                       template.id === 'resumen_semanal' ? '📅' :
-                       '📝'}
+                        template.id === 'emergencias_cdi' ? '🏥' :
+                          template.id === 'asic_consolidado' ? '📈' :
+                            template.id === 'resumen_semanal' ? '📅' :
+                              '📝'}
                     </span>
                     {store.selectedTemplateId === template.id && (
                       <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center">
@@ -555,8 +552,8 @@ export function ReportWizard({ store }: { store: StoreType }) {
             </div>
 
             {/* Export Options */}
-            <div className={`grid gap-4 ${store.currentUser?.role === 'administrador' ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
-              {store.currentUser?.role === 'administrador' && (
+            <div className={`grid gap-4 ${(store.currentUser?.role === 'administrador' || store.currentUser?.role === 'coordinador') ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+              {(store.currentUser?.role === 'administrador' || store.currentUser?.role === 'coordinador') && (
                 <button
                   onClick={exportToExcel}
                   className="flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-xl font-semibold transition-all shadow-lg shadow-green-600/20 hover:shadow-green-500/30 hover:scale-105"

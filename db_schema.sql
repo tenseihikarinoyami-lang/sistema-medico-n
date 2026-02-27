@@ -4,7 +4,7 @@ CREATE TABLE users (
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL, -- En producción, esto debería estar hasheado
   name TEXT,
-  role TEXT CHECK (role IN ('administrador', 'doctor', 'enfermero')),
+  role TEXT CHECK (role IN ('administrador', 'coordinador', 'doctor', 'enfermero')),
   cedula TEXT,
   centro TEXT,
   asic TEXT,

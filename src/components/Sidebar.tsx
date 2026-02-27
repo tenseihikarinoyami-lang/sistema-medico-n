@@ -4,6 +4,8 @@ type StoreType = ReturnType<typeof useAppStore>;
 
 export function Sidebar({ store }: { store: StoreType }) {
   const isAdmin = store.currentUser?.role === 'administrador';
+  const isCoord = store.currentUser?.role === 'coordinador';
+  const canManageUsers = isAdmin || isCoord;
 
   const navItems = [
     {
@@ -44,7 +46,7 @@ export function Sidebar({ store }: { store: StoreType }) {
       ),
       badge: store.alerts.filter(a => !a.read).length
     },
-    ...(isAdmin ? [
+    ...(canManageUsers ? [
       {
         id: 'users' as const,
         label: 'Gestión de Usuarios',
@@ -107,7 +109,7 @@ export function Sidebar({ store }: { store: StoreType }) {
           {navItems.map((item, index) => {
             const isActive = store.currentView === item.id;
             // Add separator before profile
-            const showSeparator = item.id === 'users' || (item.id === 'profile' && !isAdmin);
+            const showSeparator = item.id === 'users' || (item.id === 'profile' && !canManageUsers);
             return (
               <div key={item.id}>
                 {showSeparator && index > 0 && (

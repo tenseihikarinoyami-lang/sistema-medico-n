@@ -13,6 +13,9 @@ export function ReportsView({ store }: { store: StoreType }) {
   const [selectedReport, setSelectedReport] = useState<SavedReport | null>(null);
 
   const isAdmin = store.currentUser?.role === 'administrador';
+  const isCoord = store.currentUser?.role === 'coordinador';
+  const canDownload = isAdmin || isCoord;
+  const hasGlobalView = isAdmin || isCoord;
 
   const statusColors: Record<string, string> = {
     borrador: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
@@ -37,8 +40,8 @@ export function ReportsView({ store }: { store: StoreType }) {
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       return r.templateName.toLowerCase().includes(q) ||
-             r.createdBy.toLowerCase().includes(q) ||
-             r.config.asic?.toLowerCase().includes(q);
+        r.createdBy.toLowerCase().includes(q) ||
+        r.config.asic?.toLowerCase().includes(q);
     }
     return true;
   });
@@ -57,7 +60,7 @@ export function ReportsView({ store }: { store: StoreType }) {
 
   // Admin export: all filtered reports totalized
   const exportTotalizedReport = () => {
-    if (!isAdmin) return;
+    if (!canDownload) return;
 
     const wb = XLSX.utils.book_new();
     const wsData: (string | number)[][] = [];
@@ -172,7 +175,7 @@ export function ReportsView({ store }: { store: StoreType }) {
 
   // Admin: export single report
   const exportSingleReport = (report: SavedReport) => {
-    if (!isAdmin) return;
+    if (!canDownload) return;
 
     const wb = XLSX.utils.book_new();
     const wsData: (string | number)[][] = [];
@@ -231,15 +234,15 @@ export function ReportsView({ store }: { store: StoreType }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold">
-            {isAdmin ? 'Todos los Reportes' : 'Mis Reportes'}
+            {hasGlobalView ? 'Todos los Reportes' : 'Mis Reportes'}
           </h2>
           <p className="text-sm text-white/40">
             {filteredReports.length} reportes encontrados
-            {isAdmin && <span className="text-blue-400/60 ml-2">(Vista de administrador — Todos los usuarios)</span>}
+            {hasGlobalView && <span className="text-blue-400/60 ml-2">(Vista {isAdmin ? 'de administrador' : 'de coordinador'} — Todos los usuarios)</span>}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {isAdmin && filteredReports.length > 0 && (
+          {canDownload && filteredReports.length > 0 && (
             <button
               onClick={exportTotalizedReport}
               className="px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-xl font-semibold transition-all shadow-lg shadow-green-600/20 hover:scale-105 flex items-center gap-2"
@@ -262,8 +265,8 @@ export function ReportsView({ store }: { store: StoreType }) {
         </div>
       </div>
 
-      {/* Totals summary for admin */}
-      {isAdmin && filteredReports.length > 0 && (
+      {/* Totals summary for admin and coordinador */}
+      {hasGlobalView && filteredReports.length > 0 && (
         <div className="bg-gradient-to-r from-blue-600/10 via-blue-700/5 to-transparent border border-blue-500/15 rounded-2xl p-5">
           <h3 className="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -344,17 +347,16 @@ export function ReportsView({ store }: { store: StoreType }) {
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-start gap-4 flex-1 min-w-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xl ${
-                  report.templateId === 'rac_nacional' ? 'bg-blue-500/15' :
-                  report.templateId === 'emergencias_cdi' ? 'bg-red-500/15' :
-                  report.templateId === 'asic_consolidado' ? 'bg-green-500/15' :
-                  report.templateId === 'resumen_semanal' ? 'bg-purple-500/15' :
-                  'bg-yellow-500/15'
-                }`}>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xl ${report.templateId === 'rac_nacional' ? 'bg-blue-500/15' :
+                    report.templateId === 'emergencias_cdi' ? 'bg-red-500/15' :
+                      report.templateId === 'asic_consolidado' ? 'bg-green-500/15' :
+                        report.templateId === 'resumen_semanal' ? 'bg-purple-500/15' :
+                          'bg-yellow-500/15'
+                  }`}>
                   {report.templateId === 'rac_nacional' ? '📊' :
-                   report.templateId === 'emergencias_cdi' ? '🏥' :
-                   report.templateId === 'asic_consolidado' ? '📈' :
-                   report.templateId === 'resumen_semanal' ? '📅' : '📝'}
+                    report.templateId === 'emergencias_cdi' ? '🏥' :
+                      report.templateId === 'asic_consolidado' ? '📈' :
+                        report.templateId === 'resumen_semanal' ? '📅' : '📝'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1">
@@ -387,8 +389,8 @@ export function ReportsView({ store }: { store: StoreType }) {
                 >
                   {selectedReport?.id === report.id ? 'Ocultar' : 'Ver Detalles'}
                 </button>
-                {/* Only admin can download */}
-                {isAdmin && (
+                {/* Only admin and coordinador can download */}
+                {canDownload && (
                   <button
                     onClick={() => exportSingleReport(report)}
                     className="px-3 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/20 rounded-lg text-xs font-medium text-green-400 transition"
@@ -452,7 +454,7 @@ export function ReportsView({ store }: { store: StoreType }) {
             </svg>
             <p className="text-white/30 text-lg font-medium mb-2">No se encontraron reportes</p>
             <p className="text-white/20 text-sm">
-              {isAdmin ? 'No hay reportes en el sistema con los filtros seleccionados' : 'No tiene reportes creados. Cree uno nuevo para comenzar.'}
+              {hasGlobalView ? 'No hay reportes en el sistema con los filtros seleccionados' : 'No tiene reportes creados. Cree uno nuevo para comenzar.'}
             </p>
           </div>
         )}

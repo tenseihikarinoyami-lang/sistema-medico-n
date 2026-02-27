@@ -25,18 +25,18 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
 
       {/* Navigation */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-[#0a0e1a]/90 backdrop-blur-xl border-b border-white/5' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
+            <img
+              src="/alcaldia_logo.png"
+              alt="Alcaldía Santiago Mariño"
+              className="w-12 h-12 rounded-xl object-contain shadow-lg shadow-blue-500/20 bg-white/5 p-0.5"
+            />
             <div>
               <span className="text-xl font-bold tracking-tight">
                 Medi<span className="text-blue-400">Report</span>
               </span>
-              <div className="text-[9px] text-white/30 tracking-[0.2em] uppercase">MPPS Venezuela</div>
+              <div className="text-[8px] text-white/30 tracking-[0.15em] uppercase leading-tight">Alcaldía Santiago Mariño</div>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
@@ -72,6 +72,21 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                   Salud Pública
                 </span>
               </h1>
+
+              {/* Government Branding */}
+              <div className="flex items-center gap-4 bg-white/[0.03] border border-white/5 rounded-2xl p-4">
+                <img
+                  src="/alcaldia_logo.png"
+                  alt="Alcaldía Santiago Mariño"
+                  className="w-16 h-16 rounded-xl object-contain bg-white/5 p-1 shadow-lg shadow-blue-500/10"
+                />
+                <div>
+                  <div className="text-sm font-extrabold tracking-wider uppercase text-white/90">Alcaldía Santiago Mariño</div>
+                  <div className="text-xs font-bold text-blue-400 tracking-wide">Carlos Guzmán</div>
+                  <div className="text-[10px] text-white/40 tracking-[0.2em] uppercase font-semibold mt-0.5">Gente Que Resuelve</div>
+                </div>
+              </div>
+
               <p className="text-lg text-white/50 max-w-lg leading-relaxed">
                 Plataforma digital especializada en la generación automatizada de reportes médicos institucionales basados en estándares nacionales del MPPS, con múltiples plantillas predefinidas según ASIC, RAC y formatos oficiales del Ministerio de Salud.
               </p>
@@ -148,11 +163,10 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
                     {['Matriz RAC Nacional', 'Emergencias CDI', 'ASIC Consolidado'].map((name, i) => (
                       <div key={name} className="flex items-center justify-between text-xs">
                         <span className="text-white/60">{name}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                          i === 0 ? 'bg-green-500/20 text-green-400' :
-                          i === 1 ? 'bg-blue-500/20 text-blue-400' :
-                          'bg-yellow-500/20 text-yellow-400'
-                        }`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${i === 0 ? 'bg-green-500/20 text-green-400' :
+                            i === 1 ? 'bg-blue-500/20 text-blue-400' :
+                              'bg-yellow-500/20 text-yellow-400'
+                          }`}>
                           {i === 0 ? 'Aprobado' : i === 1 ? 'Enviado' : 'Pendiente'}
                         </span>
                       </div>
@@ -361,14 +375,17 @@ export function LandingPage({ onGetStarted }: { onGetStarted: () => void }) {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+              <img
+                src="/alcaldia_logo.png"
+                alt="Alcaldía Santiago Mariño"
+                className="w-10 h-10 rounded-lg object-contain bg-white/5 p-0.5"
+              />
+              <div>
+                <span className="font-semibold">Medi<span className="text-blue-400">Report</span></span>
+                <div className="text-[8px] text-white/25 tracking-wider uppercase">Alcaldía Santiago Mariño · Carlos Guzmán · Gente Que Resuelve</div>
               </div>
-              <span className="font-semibold">Medi<span className="text-blue-400">Report</span></span>
             </div>
-            <p className="text-sm text-white/30">
+            <p className="text-sm text-white/30 text-center md:text-right">
               © 2025 MediReport — Sistema Integral de Reportes Médicos — MPPS Venezuela
             </p>
           </div>

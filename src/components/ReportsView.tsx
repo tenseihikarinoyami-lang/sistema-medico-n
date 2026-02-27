@@ -229,32 +229,32 @@ export function ReportsView({ store }: { store: StoreType }) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Actions Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4">
+      {/* Normalized Actions Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.02] border border-white/5 rounded-2xl p-3">
         <div>
-          <p className="text-sm text-white/40">
+          <p className="text-[11px] text-white/40 uppercase tracking-wider font-semibold">
             {filteredReports.length} reportes encontrados
-            {hasGlobalView && <span className="text-blue-400/60 ml-2">(Vista {isAdmin ? 'Admin' : 'Coord'} — Todos los usuarios)</span>}
+            {hasGlobalView && <span className="text-blue-400/60 ml-2">({isAdmin ? 'Admin' : 'Coord'})</span>}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {canDownload && filteredReports.length > 0 && (
             <button
               onClick={exportTotalizedReport}
-              className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-green-600/20 hover:scale-105 flex items-center gap-2"
+              className="px-3 py-1.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 rounded-lg text-[10px] font-bold transition-all shadow-lg shadow-green-600/20 hover:scale-105 flex items-center gap-1.5"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Exportar Totalizado ({filteredReports.length})
+              Exportar ({filteredReports.length})
             </button>
           )}
           <button
             onClick={store.startWizard}
-            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-xl text-xs font-semibold transition-all shadow-lg shadow-blue-600/20 hover:scale-105 flex items-center gap-2"
+            className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 rounded-lg text-[10px] font-bold transition-all shadow-lg shadow-blue-600/20 hover:scale-105 flex items-center gap-1.5"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Nuevo Reporte

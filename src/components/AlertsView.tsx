@@ -49,22 +49,22 @@ export function AlertsView({ store }: { store: StoreType }) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Actions Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-4">
+      {/* Normalized Actions Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.02] border border-white/5 rounded-2xl p-3">
         <div>
-          <p className="text-sm text-white/40">
+          <p className="text-[11px] text-white/40 uppercase tracking-wider font-semibold">
             {store.alerts.filter(a => !a.read).length} alertas sin leer de {store.alerts.length} totales
           </p>
         </div>
         <button
           onClick={markAllRead}
-          className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-medium transition flex items-center gap-2"
+          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-bold transition flex items-center gap-1.5"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          Marcar todas como leídas
+          Marcar leídas
         </button>
       </div>
 
@@ -96,8 +96,8 @@ export function AlertsView({ store }: { store: StoreType }) {
             key={f.value}
             onClick={() => setFilter(f.value)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition ${filter === f.value
-                ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'
+              ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+              : 'bg-white/5 text-white/50 border border-white/5 hover:bg-white/10'
               }`}
           >
             {f.label}
@@ -115,8 +115,8 @@ export function AlertsView({ store }: { store: StoreType }) {
           >
             <div className="flex items-start gap-4">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${alert.type === 'critical' ? 'bg-red-500/20' :
-                  alert.type === 'warning' ? 'bg-yellow-500/20' :
-                    'bg-blue-500/20'
+                alert.type === 'warning' ? 'bg-yellow-500/20' :
+                  'bg-blue-500/20'
                 }`}>
                 {typeIcons[alert.type]}
               </div>
@@ -124,8 +124,8 @@ export function AlertsView({ store }: { store: StoreType }) {
                 <div className="flex items-center gap-3 mb-1">
                   <h3 className="font-semibold text-sm">{alert.title}</h3>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${alert.type === 'critical' ? 'bg-red-500/20 text-red-400' :
-                      alert.type === 'warning' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-blue-500/20 text-blue-400'
+                    alert.type === 'warning' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-blue-500/20 text-blue-400'
                     }`}>
                     {typeLabels[alert.type]}
                   </span>

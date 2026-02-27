@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAppStore } from './store';
 import { LandingPage } from './components/LandingPage';
 import { LoginPage } from './components/LoginPage';
@@ -77,7 +78,7 @@ export function App() {
       <Sidebar store={store} />
       <div className={`transition-all duration-300 ${store.sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'}`}>
         <Header store={store} viewTitle={viewTitles[store.currentView] || ''} />
-        <main className="p-4 md:p-6 lg:p-8 pt-24 md:pt-28">
+        <main className="p-4 md:p-6 lg:p-8">
           {store.currentView === 'dashboard' && <Dashboard store={store} />}
           {store.currentView === 'wizard' && <ReportWizard store={store} />}
           {store.currentView === 'reports' && <ReportsView store={store} />}
@@ -92,9 +93,18 @@ export function App() {
 
 function Header({ store, viewTitle }: { store: ReturnType<typeof useAppStore>; viewTitle: string }) {
   const unreadAlerts = store.alerts.filter(a => !a.read).length;
+  const [isCompact, setIsCompact] = useState(() => {
+    return localStorage.getItem('header_compact') === 'true';
+  });
+
+  const toggleCompact = () => {
+    const newState = !isCompact;
+    setIsCompact(newState);
+    localStorage.setItem('header_compact', String(newState));
+  };
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-auto z-30 bg-[#0d1225]/90 backdrop-blur-xl border-b border-white/5 px-4 md:px-6 lg:px-8 py-2">
+    <header className="sticky top-0 z-30 bg-[#0d1225]/90 backdrop-blur-xl border-b border-white/5 px-4 md:px-6 lg:px-8 py-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
@@ -107,7 +117,7 @@ function Header({ store, viewTitle }: { store: ReturnType<typeof useAppStore>; v
           </button>
           <div>
             <h1 className="text-lg font-semibold text-white/90">{viewTitle}</h1>
-            <p className="text-xs text-white/40">{new Date().toLocaleDateString('es-VE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p className="text-[10px] text-white/30">{new Date().toLocaleDateString('es-VE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -124,18 +134,33 @@ function Header({ store, viewTitle }: { store: ReturnType<typeof useAppStore>; v
               </span>
             )}
           </button>
-          <button
-            onClick={() => store.setCurrentView('profile')}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition cursor-pointer"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-sm font-bold">
-              {store.currentUser?.name?.charAt(0) || 'U'}
-            </div>
-            <div className="text-sm">
-              <p className="font-medium text-white/90">{store.currentUser?.name}</p>
-              <p className="text-[10px] text-white/40 capitalize">{store.currentUser?.role}</p>
-            </div>
-          </button>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={toggleCompact}
+              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition text-white/30 hover:text-white/60"
+              title={isCompact ? "Expandir perfil" : "Contraer perfil"}
+            >
+              <svg className={`w-4 h-4 transition-transform duration-300 ${isCompact ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => store.setCurrentView('profile')}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition cursor-pointer overflow-hidden ${isCompact ? 'max-w-[48px]' : 'max-w-[200px]'}`}
+            >
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-sm font-bold flex-shrink-0">
+                {store.currentUser?.name?.charAt(0) || 'U'}
+              </div>
+              {!isCompact && (
+                <div className="text-sm text-left animate-in fade-in slide-in-from-right-2 duration-300">
+                  <p className="font-medium text-white/90 truncate">{store.currentUser?.name}</p>
+                  <p className="text-[10px] text-white/40 capitalize truncate">{store.currentUser?.role}</p>
+                </div>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </header>
